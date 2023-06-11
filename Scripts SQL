@@ -1,0 +1,252 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Sexo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Sexo` (
+  `id_sexo` INT NOT NULL,
+  `genero` VARCHAR(25) NOT NULL,
+  PRIMARY KEY (`id_sexo`),
+  UNIQUE INDEX `id_genero_UNIQUE` (`id_sexo` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Localização`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Localização` (
+  `numero` VARCHAR(6) NOT NULL,
+  `pais` VARCHAR(10) BINARY NOT NULL,
+  `cidade` VARCHAR(15) NOT NULL,
+  `estado` VARCHAR(15) NOT NULL,
+  `tipo_logradouro` VARCHAR(45) NOT NULL,
+  `logradouro` VARCHAR(45) NOT NULL,
+  `cep` VARCHAR(10) NOT NULL,
+  PRIMARY KEY (`numero`),
+  UNIQUE INDEX `numero_UNIQUE` (`numero` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Perfil`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Perfil` (
+  `CPF` VARCHAR(20) NOT NULL,
+  `id_perfil` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(20) NOT NULL,
+  `nome` VARCHAR(10) NOT NULL,
+  `telefone` VARCHAR(13) NOT NULL,
+  `sobrenome` VARCHAR(10) NOT NULL,
+  `data_nascimento` DATE NOT NULL,
+  `senha` VARCHAR(8) NOT NULL,
+  `Sexo_id_sexo` INT NOT NULL,
+  `Localização_numero` VARCHAR(6) NOT NULL,
+  PRIMARY KEY (`CPF`, `id_perfil`),
+  UNIQUE INDEX `CPF_UNIQUE` (`CPF` ASC) VISIBLE,
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  UNIQUE INDEX `telefone_UNIQUE` (`telefone` ASC) VISIBLE,
+  UNIQUE INDEX `id_perfil_UNIQUE` (`id_perfil` ASC) VISIBLE,
+  INDEX `fk_Perfil_Sexo1_idx` (`Sexo_id_sexo` ASC) VISIBLE,
+  INDEX `fk_Perfil_Localização1_idx` (`Localização_numero` ASC) VISIBLE,
+  CONSTRAINT `fk_Perfil_Sexo1`
+    FOREIGN KEY (`Sexo_id_sexo`)
+    REFERENCES `mydb`.`Sexo` (`id_sexo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Perfil_Localização1`
+    FOREIGN KEY (`Localização_numero`)
+    REFERENCES `mydb`.`Localização` (`numero`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Caracteristicas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Caracteristicas` (
+  `id_caracteristica` INT NOT NULL,
+  `tipo_caracteristica` VARCHAR(45) NOT NULL,
+  `nome` VARCHAR(45) NOT NULL,
+  `Perfil_CPF` VARCHAR(20) NOT NULL,
+  `Perfil_id_perfil` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_caracteristica`),
+  UNIQUE INDEX `id_caracteristica_UNIQUE` (`id_caracteristica` ASC) VISIBLE,
+  INDEX `fk_Caracteristicas_Perfil_idx` (`Perfil_CPF` ASC, `Perfil_id_perfil` ASC) VISIBLE,
+  CONSTRAINT `fk_Caracteristicas_Perfil`
+    FOREIGN KEY (`Perfil_CPF` , `Perfil_id_perfil`)
+    REFERENCES `mydb`.`Perfil` (`CPF` , `id_perfil`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Premium`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Premium` (
+  `id_premium` INT NOT NULL,
+  `funcionalidade` VARCHAR(45) NOT NULL,
+  `Perfil_CPF` VARCHAR(20) NOT NULL,
+  `Perfil_id_perfil` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_premium`),
+  INDEX `fk_Premium_Perfil1_idx` (`Perfil_CPF` ASC, `Perfil_id_perfil` ASC) VISIBLE,
+  CONSTRAINT `fk_Premium_Perfil1`
+    FOREIGN KEY (`Perfil_CPF` , `Perfil_id_perfil`)
+    REFERENCES `mydb`.`Perfil` (`CPF` , `id_perfil`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Busca_Perfil`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Busca_Perfil` (
+  `id_busca` INT NOT NULL,
+  `tipo_busca` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_busca`),
+  UNIQUE INDEX `id_busca_UNIQUE` (`id_busca` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Pedidos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Pedidos` (
+  `id_pedidos` INT NOT NULL,
+  `numero_pedido` VARCHAR(45) NOT NULL,
+  `status_pedido` VARCHAR(45) NOT NULL,
+  `valor` DECIMAL(2) NOT NULL,
+  PRIMARY KEY (`id_pedidos`, `numero_pedido`),
+  UNIQUE INDEX `id_pedidos_UNIQUE` (`id_pedidos` ASC) VISIBLE,
+  UNIQUE INDEX `numero_pedido_UNIQUE` (`numero_pedido` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Chat`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Chat` (
+  `id_chat` INT NOT NULL,
+  `tipo_chat` VARCHAR(45) NOT NULL,
+  `estilo_chat` VARCHAR(45) NOT NULL,
+  `hora` TIME NOT NULL,
+  `data_chat` DATE NOT NULL,
+  PRIMARY KEY (`id_chat`),
+  UNIQUE INDEX `id_chat_UNIQUE` (`id_chat` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Configurações`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Configurações` (
+  `id_configurações` INT NOT NULL,
+  `funcao` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id_configurações`),
+  UNIQUE INDEX `id_configurações_UNIQUE` (`id_configurações` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Home`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Home` (
+  `id_home` INT NOT NULL,
+  `funcionalidades` VARCHAR(45) NOT NULL,
+  `Perfil_CPF` VARCHAR(20) NOT NULL,
+  `Perfil_id_perfil` VARCHAR(45) NOT NULL,
+  `Chat_id_chat` INT NOT NULL,
+  `Configurações_id_configurações` INT NOT NULL,
+  PRIMARY KEY (`id_home`),
+  UNIQUE INDEX `id_home_UNIQUE` (`id_home` ASC) VISIBLE,
+  INDEX `fk_Home_Perfil1_idx` (`Perfil_CPF` ASC, `Perfil_id_perfil` ASC) VISIBLE,
+  INDEX `fk_Home_Chat1_idx` (`Chat_id_chat` ASC) VISIBLE,
+  INDEX `fk_Home_Configurações1_idx` (`Configurações_id_configurações` ASC) VISIBLE,
+  CONSTRAINT `fk_Home_Perfil1`
+    FOREIGN KEY (`Perfil_CPF` , `Perfil_id_perfil`)
+    REFERENCES `mydb`.`Perfil` (`CPF` , `id_perfil`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Home_Chat1`
+    FOREIGN KEY (`Chat_id_chat`)
+    REFERENCES `mydb`.`Chat` (`id_chat`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Home_Configurações1`
+    FOREIGN KEY (`Configurações_id_configurações`)
+    REFERENCES `mydb`.`Configurações` (`id_configurações`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Nota_Fiscal`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Nota_Fiscal` (
+  `Premium_id_premium` INT NOT NULL,
+  `Pedidos_id_pedidos` INT NOT NULL,
+  `Pedidos_numero_pedido` VARCHAR(45) NOT NULL,
+  `data_pedido` DATE NOT NULL,
+  `hora_pedido` DATETIME NOT NULL,
+  `valor_pedido` DECIMAL(4) NOT NULL,
+  PRIMARY KEY (`Premium_id_premium`, `Pedidos_id_pedidos`, `Pedidos_numero_pedido`),
+  INDEX `fk_Premium_has_Pedidos_Pedidos1_idx` (`Pedidos_id_pedidos` ASC, `Pedidos_numero_pedido` ASC) VISIBLE,
+  INDEX `fk_Premium_has_Pedidos_Premium1_idx` (`Premium_id_premium` ASC) VISIBLE,
+  CONSTRAINT `fk_Premium_has_Pedidos_Premium1`
+    FOREIGN KEY (`Premium_id_premium`)
+    REFERENCES `mydb`.`Premium` (`id_premium`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Premium_has_Pedidos_Pedidos1`
+    FOREIGN KEY (`Pedidos_id_pedidos` , `Pedidos_numero_pedido`)
+    REFERENCES `mydb`.`Pedidos` (`id_pedidos` , `numero_pedido`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`Historico_Busca`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`Historico_Busca` (
+  `Busca_Perfil_id_busca` INT NOT NULL,
+  `Perfil_CPF` VARCHAR(20) NOT NULL,
+  `Perfil_id_perfil` VARCHAR(45) NOT NULL,
+  `data` DATE NOT NULL,
+  `hora` DATETIME NOT NULL,
+  PRIMARY KEY (`Busca_Perfil_id_busca`, `Perfil_CPF`, `Perfil_id_perfil`),
+  INDEX `fk_Busca_Perfil_has_Perfil_Perfil1_idx` (`Perfil_CPF` ASC, `Perfil_id_perfil` ASC) VISIBLE,
+  INDEX `fk_Busca_Perfil_has_Perfil_Busca_Perfil1_idx` (`Busca_Perfil_id_busca` ASC) VISIBLE,
+  CONSTRAINT `fk_Busca_Perfil_has_Perfil_Busca_Perfil1`
+    FOREIGN KEY (`Busca_Perfil_id_busca`)
+    REFERENCES `mydb`.`Busca_Perfil` (`id_busca`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Busca_Perfil_has_Perfil_Perfil1`
+    FOREIGN KEY (`Perfil_CPF` , `Perfil_id_perfil`)
+    REFERENCES `mydb`.`Perfil` (`CPF` , `id_perfil`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
